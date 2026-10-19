@@ -1,0 +1,21 @@
+{
+    "name": "frontend",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite"
+    },
+    "dependencies": {
+        "@saas/api-client": "workspace:*",
+        "@tanstack/react-query": "^5.0.0",
+        "axios": "^1.6.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "zod": "^3.22.0"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^4.2.0",
+        "vite": "^5.0.0"
+    }
+}

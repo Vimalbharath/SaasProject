@@ -1,0 +1,17 @@
+{
+    "name": "@saas/api-client",
+    "version": "1.0.0",
+    "main": "./src/index.ts",
+    "scripts": {
+        "generate": "orval"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^5.0.0",
+        "axios": "^1.6.0",
+        "zod": "^3.22.0"
+    },
+    "devDependencies": {
+        "orval": "^6.24.0",
+        "typescript": "^5.0.0"
+    }
+}
