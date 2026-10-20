@@ -153,7 +153,7 @@ function AppDashboard() {
                 <h3>Public Games</h3>
                 <button onClick={() => refetchPublicGames()}>Refresh Public Games</button>
                 <ul>
-                    {Array.isArray(publicGames?.data) && publicGames.data.map((g: any) => (
+                    {Array.isArray(publicGames?.data) && publicGames?.data.map((g: any) => (
                         <li key={g.id}>{g.title} - Score: {g.scoreDetails || 'N/A'}</li>
                     ))}
                 </ul>
@@ -165,7 +165,7 @@ function AppDashboard() {
                 <button onClick={() => { refetchAllTenants(); refetchPendingTenants(); }}>Load Tenants</button>
                 <h4>Pending Tenants</h4>
                 <ul>
-                    {Array.isArray(pendingTenants?.data) && pendingTenants.data.map((t: any) => (
+                    {Array.isArray(pendingTenants?.data) && pendingTenants?.data.map((t: any) => (
                         <li key={t.id}>
                             {t.name} ({t.tier}) - Status: {t.status}
                             <button style={{ marginLeft: 10 }} onClick={() => approveTenantMutation.mutate({ id: t.id }, { onSuccess: () => { refetchPendingTenants(); refetchAllTenants(); } })}>Approve</button>
@@ -174,7 +174,7 @@ function AppDashboard() {
                 </ul>
                 <h4>All Tenants</h4>
                 <ul>
-                    {Array.isArray(allTenants?.data) && allTenants.data.map((t: any) => (
+                    {Array.isArray(allTenants?.data) && allTenants?.data.map((t: any) => (
                         <li key={t.id}>
                             {t.name} ({t.tier}) - Status: {t.status}
                             <button style={{ marginLeft: 10, color: 'red' }} onClick={() => deleteTenantMutation.mutate({ id: t.id }, { onSuccess: () => { refetchAllTenants(); } })}>Delete</button>
@@ -187,7 +187,7 @@ function AppDashboard() {
             <div style={{ border: '1px solid #ccc', padding: 15, marginBottom: 20, borderRadius: 5 }}>
                 <h3>Tenant Admin Portal (Tenant ID: {tenantId})</h3>
                 <button onClick={() => { refetchOrganizers(); refetchTenantGames(); }}>Load Tenant Data</button>
-                
+
                 <h4>Organizers</h4>
                 <button onClick={() => {
                     const u = prompt("Organizer username:");
@@ -195,7 +195,7 @@ function AppDashboard() {
                     if (u && p) addOrgMutation.mutate({ data: { username: u, password: p } }, { onSuccess: () => refetchOrganizers() });
                 }}>Add Organizer</button>
                 <ul>
-                    {Array.isArray(organizers?.data) && organizers.data.map((org: any) => (
+                    {Array.isArray(organizers?.data) && organizers?.data.map((org: any) => (
                         <li key={org.id}>
                             {org.username} (Role: {org.role})
                             <button style={{ marginLeft: 10, color: 'red' }} onClick={() => deleteOrgMutation.mutate({ id: org.id }, { onSuccess: () => refetchOrganizers() })}>Delete</button>
@@ -209,7 +209,7 @@ function AppDashboard() {
                     if (title) createGameMutation.mutate({ data: { title, public: true, scoreDetails: '0-0' } }, { onSuccess: () => refetchTenantGames() });
                 }}>Create Game</button>
                 <ul>
-                    {Array.isArray(tenantGames?.data) && tenantGames.data.map((g: any) => (
+                    {Array.isArray(tenantGames?.data) && tenantGames?.data.map((g: any) => (
                         <li key={g.id}>
                             {g.title} [{g.public ? 'Public' : 'Private'}] - {g.scoreDetails}
                             <button style={{ marginLeft: 10, color: 'red' }} onClick={() => deleteGameMutation.mutate({ id: g.id }, { onSuccess: () => refetchTenantGames() })}>Delete</button>
@@ -223,7 +223,7 @@ function AppDashboard() {
                 <h3>Organizer Portal</h3>
                 <button onClick={() => refetchOrganizerGames()}>Load Assigned Games</button>
                 <ul>
-                    {Array.isArray(organizerGames?.data) && organizerGames.data.map((g: any) => (
+                    {Array.isArray(organizerGames?.data) && organizerGames?.data.map((g: any) => (
                         <li key={g.id} style={{ margin: '10px 0' }}>
                             {g.title} - Score: {g.scoreDetails}
                             <button style={{ marginLeft: 10 }} onClick={() => {
