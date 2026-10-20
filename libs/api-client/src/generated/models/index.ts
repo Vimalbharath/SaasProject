@@ -5,4 +5,5 @@
  * OpenAPI spec version: v0
  */
 
+export * from './organizer';
 export * from './tenant';
