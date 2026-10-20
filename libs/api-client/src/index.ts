@@ -1,4 +1,14 @@
-export * from './generated/endpoints/tenant-controller/tenant-controller';
+export {
+  updateTenant,
+  getTenants,
+  createTenant,
+  getUpdateTenantMutationOptions,
+  useUpdateTenant,
+  getGetTenantsQueryOptions,
+  useGetTenants,
+  getCreateTenantMutationOptions,
+  useCreateTenant
+} from './generated/endpoints/tenant-controller/tenant-controller';
 export * from './generated/endpoints/organizer-controller/organizer-controller';
 export * from './generated/endpoints/public-controller/public-controller';
 export * from './generated/endpoints/auth-controller/auth-controller';
