@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     useLogin,
     useRegisterTenant,
@@ -17,11 +17,30 @@ import {
     useGetGames,
     useUpdateGameScore
 } from '@saas/api-client';
+import axios from 'axios';
 
 function AppDashboard() {
     const [token, setToken] = useState(localStorage.getItem('token') || '');
     const [role, setRole] = useState(localStorage.getItem('role') || '');
-    const [tenantId, setTenantId] = useState(localStorage.getItem('activeTenantId') || '');
+    const [tenantId, setTenantId] = useState(localStorage.getItem('activeTenantId') || '1');
+
+    // Configure axios global defaults for authorization
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (tenantId) {
+            axios.defaults.headers.common['X-Tenant-ID'] = tenantId;
+            localStorage.setItem('activeTenantId', tenantId);
+        } else {
+            delete axios.defaults.headers.common['X-Tenant-ID'];
+        }
+    }, [tenantId]);
 
     // Auth state
     const [username, setUsername] = useState('');
@@ -60,18 +79,23 @@ function AppDashboard() {
             { data: { username, password } },
             {
                 onSuccess: (res: any) => {
-                    const data = res.data;
-                    setToken(data.token);
-                    setRole(data.role);
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('role', data.role);
-                    if (data.tenantId) {
-                        setTenantId(data.tenantId.toString());
-                        localStorage.setItem('activeTenantId', data.tenantId.toString());
+                    const data = res.data || res;
+                    const fetchedToken = data.token;
+                    const fetchedRole = data.role;
+                    const fetchedTenantId = data.tenantId;
+
+                    setToken(fetchedToken);
+                    setRole(fetchedRole);
+                    localStorage.setItem('token', fetchedToken);
+                    localStorage.setItem('role', fetchedRole);
+
+                    if (fetchedTenantId) {
+                        setTenantId(fetchedTenantId.toString());
+                        localStorage.setItem('activeTenantId', fetchedTenantId.toString());
                     }
                     alert('Logged in successfully!');
                 },
-                onError: (err) => alert('Login failed: ' + err.message)
+                onError: (err: any) => alert('Login failed: ' + (err.response?.data?.message || err.message))
             }
         );
     };
@@ -89,10 +113,12 @@ function AppDashboard() {
                     refetchAllTenants();
                     refetchPendingTenants();
                 },
-                onError: (err) => alert('Registration failed: ' + err.message)
+                onError: (err: any) => alert('Registration failed: ' + (err.response?.data?.message || err.message))
             }
         );
     };
+
+    const normalizedRole = role ? role.replace('ROLE_', '').toUpperCase() : '';
 
     const styles: { [key: string]: React.CSSProperties } = {
         container: {
@@ -246,7 +272,9 @@ function AppDashboard() {
                         <strong>Session Status: </strong>
                         {token ? <span style={{ color: '#16a34a' }}>Authenticated</span> : <span style={{ color: '#dc2626' }}>Guest</span>}
                         {role && <span style={{ ...styles.badge, marginLeft: '12px' }}>{role}</span>}
-                        {tenantId && <span style={{ marginLeft: '12px', color: '#64748b' }}>Tenant ID: {tenantId}</span>}
+                        <span style={{ marginLeft: '12px', color: '#64748b' }}>
+                            Tenant ID: <input style={{ width: '60px', display: 'inline-block', marginLeft: '5px' }} value={tenantId} onChange={(e) => setTenantId(e.target.value)} />
+                        </span>
                     </div>
                 </div>
 
@@ -307,7 +335,7 @@ function AppDashboard() {
                 </div>
 
                 {/* Super Admin Section */}
-                {role === 'SUPER_ADMIN' && (
+                {normalizedRole === 'SUPER_ADMIN' && (
                     <div style={styles.card}>
                         <h3 style={styles.cardTitle}>Super Admin Management</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => { refetchAllTenants(); refetchPendingTenants(); }}>Load Tenants Data</button>
@@ -338,7 +366,7 @@ function AppDashboard() {
                 )}
 
                 {/* Tenant Admin Section */}
-                {role === 'TENANT_ADMIN' && (
+                {normalizedRole === 'TENANT_ADMIN' && (
                     <div style={styles.card}>
                         <h3 style={styles.cardTitle}>Tenant Administration</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => { refetchOrganizers(); refetchTenantGames(); }}>Load Tenant Data</button>
@@ -375,7 +403,7 @@ function AppDashboard() {
                 )}
 
                 {/* Organizer Section */}
-                {role === 'ORGANIZER' && (
+                {normalizedRole === 'ORGANIZER' && (
                     <div style={styles.card}>
                         <h3 style={styles.cardTitle}>Organizer Portal</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => refetchOrganizerGames()}>Load Assigned Games</button>
