@@ -297,7 +297,7 @@ function AppDashboard() {
                     <h3 style={styles.cardTitle}>Public Games & Scores</h3>
                     <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => refetchPublicGames()}>Refresh Games</button>
                     <ul style={styles.list}>
-                        {Array.isArray(publicGames?.data) && publicGames.data.map((g: any) => (
+                        {Array.isArray(publicGames?.data) && publicGames?.data.map((g: any) => (
                             <li key={g.id} style={styles.listItem}>
                                 <span><strong>{g.title}</strong></span>
                                 <span style={styles.badge}>Score: {g.scoreDetails || 'N/A'}</span>
@@ -311,10 +311,10 @@ function AppDashboard() {
                     <div style={styles.card}>
                         <h3 style={styles.cardTitle}>Super Admin Management</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => { refetchAllTenants(); refetchPendingTenants(); }}>Load Tenants Data</button>
-                        
+
                         <h4 style={{ color: '#475569', fontSize: '15px' }}>Pending Tenants</h4>
                         <ul style={{ ...styles.list, marginBottom: '20px' }}>
-                            {Array.isArray(pendingTenants?.data) && pendingTenants.data.map((t: any) => (
+                            {Array.isArray(pendingTenants?.data) && pendingTenants?.data.map((t: any) => (
                                 <li key={t.id} style={styles.listItem}>
                                     <span>{t.name} ({t.tier})</span>
                                     <div>
@@ -327,7 +327,7 @@ function AppDashboard() {
 
                         <h4 style={{ color: '#475569', fontSize: '15px' }}>All Tenants</h4>
                         <ul style={styles.list}>
-                            {Array.isArray(allTenants?.data) && allTenants.data.map((t: any) => (
+                            {Array.isArray(allTenants?.data) && allTenants?.data.map((t: any) => (
                                 <li key={t.id} style={styles.listItem}>
                                     <span>{t.name} ({t.tier}) - <span style={styles.badge}>{t.status}</span></span>
                                     <button style={styles.dangerButton} onClick={() => deleteTenantMutation.mutate({ id: t.id }, { onSuccess: () => { refetchAllTenants(); } })}>Delete</button>
@@ -342,7 +342,7 @@ function AppDashboard() {
                     <div style={styles.card}>
                         <h3 style={styles.cardTitle}>Tenant Administration</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => { refetchOrganizers(); refetchTenantGames(); }}>Load Tenant Data</button>
-                        
+
                         <h4 style={{ color: '#475569', fontSize: '15px' }}>Organizers</h4>
                         <button style={{ ...styles.button, marginBottom: '10px', fontSize: '12px', padding: '6px 10px' }} onClick={() => {
                             const u = prompt("Organizer username:");
@@ -350,7 +350,7 @@ function AppDashboard() {
                             if (u && p) addOrgMutation.mutate({ data: { username: u, password: p } }, { onSuccess: () => refetchOrganizers() });
                         }}>Add Organizer</button>
                         <ul style={{ ...styles.list, marginBottom: '20px' }}>
-                            {Array.isArray(organizers?.data) && organizers.data.map((org: any) => (
+                            {Array.isArray(organizers?.data) && organizers?.data.map((org: any) => (
                                 <li key={org.id} style={styles.listItem}>
                                     <span>{org.username} <span style={styles.badge}>{org.role}</span></span>
                                     <button style={styles.dangerButton} onClick={() => deleteOrgMutation.mutate({ id: org.id }, { onSuccess: () => refetchOrganizers() })}>Delete</button>
@@ -364,7 +364,7 @@ function AppDashboard() {
                             if (title) createGameMutation.mutate({ data: { title, public: true, scoreDetails: '0-0' } }, { onSuccess: () => refetchTenantGames() });
                         }}>Create Game</button>
                         <ul style={styles.list}>
-                            {Array.isArray(tenantGames?.data) && tenantGames.data.map((g: any) => (
+                            {Array.isArray(tenantGames?.data) && tenantGames?.data.map((g: any) => (
                                 <li key={g.id} style={styles.listItem}>
                                     <span>{g.title} <span style={styles.badge}>{g.public ? 'Public' : 'Private'}</span> - {g.scoreDetails}</span>
                                     <button style={styles.dangerButton} onClick={() => deleteGameMutation.mutate({ id: g.id }, { onSuccess: () => refetchTenantGames() })}>Delete</button>
@@ -380,7 +380,7 @@ function AppDashboard() {
                         <h3 style={styles.cardTitle}>Organizer Portal</h3>
                         <button style={{ ...styles.button, marginBottom: '15px' }} onClick={() => refetchOrganizerGames()}>Load Assigned Games</button>
                         <ul style={styles.list}>
-                            {Array.isArray(organizerGames?.data) && organizerGames.data.map((g: any) => (
+                            {Array.isArray(organizerGames?.data) && organizerGames?.data.map((g: any) => (
                                 <li key={g.id} style={styles.listItem}>
                                     <span><strong>{g.title}</strong> - Score: {g.scoreDetails}</span>
                                     <button style={styles.button} onClick={() => {
