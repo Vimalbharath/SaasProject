@@ -1,21 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useGetTenants, useCreateTenant } from '@saas/api-client';
+import {
+    useGetTenants,
+    useCreateTenant,
+    useUpdateTenant,
+    useDeleteTenant
+} from '@saas/api-client';
 
 const queryClient = new QueryClient();
 
 function TenantApp() {
     const { data: tenants, isLoading, refetch } = useGetTenants();
-    const createTenantMutation = useCreateTenant();
+    const createMutation = useCreateTenant();
+    const updateMutation = useUpdateTenant();
+    const deleteMutation = useDeleteTenant();
 
-    const handleAddTenant = () => {
+    // Create
+    const handleAdd = () => {
         const name = prompt('Enter Tenant Name:');
         if (name) {
-            createTenantMutation.mutate(
-                { data: { name } },
-                { onSuccess: () => refetch() }
-            );
+            createMutation.mutate({ data: { name } }, { onSuccess: () => refetch() });
+        }
+    };
+
+    // Update
+    const handleEdit = (id: number, currentName: string) => {
+        const name = prompt('Update Tenant Name:', currentName);
+        if (name) {
+            updateMutation.mutate({ id, data: { name } }, { onSuccess: () => refetch() });
+        }
+    };
+
+    // Delete
+    const handleDelete = (id: number) => {
+        if (confirm('Are you sure you want to delete this tenant?')) {
+            deleteMutation.mutate({ id }, { onSuccess: () => refetch() });
         }
     };
 
@@ -23,12 +43,14 @@ function TenantApp() {
 
     return (
         <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
-            <h2>Tenant List (1-Table Stack Test)</h2>
-            <button onClick={handleAddTenant}>Add Tenant</button>
+            <h2>SaaS Tenant Management (Full CRUD)</h2>
+            <button onClick={handleAdd}>Add Tenant</button>
             <ul>
-                {Array.isArray(tenants?.data) && tenants?.data?.map((t: any) => (
-                    <li key={t.id}>
-                        <strong>ID:</strong> {t.id} | <strong>Name:</strong> {t.name}
+                {Array.isArray(tenants?.data) && tenants?.data.map((t: any) => (
+                    <li key={t.id} style={{ margin: '10px 0' }}>
+                        <strong>ID:</strong> {t.id} | <strong>Name:</strong> {t.name} {' '}
+                        <button onClick={() => handleEdit(t.id, t.name)}>Edit</button>{' '}
+                        <button onClick={() => handleDelete(t.id)} style={{ color: 'red' }}>Delete</button>
                     </li>
                 ))}
             </ul>

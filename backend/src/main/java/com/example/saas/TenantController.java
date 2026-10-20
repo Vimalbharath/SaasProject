@@ -23,4 +23,19 @@ public class TenantController {
     public Tenant createTenant(@RequestBody Tenant tenant) {
         return repository.save(tenant);
     }
+
+    // --- ADDED FOR UPDATE ---
+    @PutMapping("/{id}")
+    public Tenant updateTenant(@PathVariable Long id, @RequestBody Tenant updatedTenant) {
+        return repository.findById(id).map(tenant -> {
+            tenant.setName(updatedTenant.getName());
+            return repository.save(tenant);
+        }).orElseThrow(() -> new RuntimeException("Tenant not found with id " + id));
+    }
+
+    // --- ADDED FOR DELETE ---
+    @DeleteMapping("/{id}")
+    public void deleteTenant(@PathVariable Long id) {
+        repository.deleteById(id);
+    }
 }

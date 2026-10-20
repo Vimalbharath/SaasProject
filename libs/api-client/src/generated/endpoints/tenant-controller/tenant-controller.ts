@@ -29,7 +29,103 @@ import type {
 
 
 
-export const getTenants = (
+export const updateTenant = (
+    id: number,
+    tenant: Tenant, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Tenant>> => {
+    
+    return axios.put(
+      `/api/tenants/${id}`,
+      tenant,options
+    );
+  }
+
+
+
+export const getUpdateTenantMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTenant>>, TError,{id: number;data: Tenant}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTenant>>, TError,{id: number;data: Tenant}, TContext> => {
+const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTenant>>, {id: number;data: Tenant}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateTenant(id,data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateTenantMutationResult = NonNullable<Awaited<ReturnType<typeof updateTenant>>>
+    export type UpdateTenantMutationBody = Tenant
+    export type UpdateTenantMutationError = AxiosError<unknown>
+
+    export const useUpdateTenant = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTenant>>, TError,{id: number;data: Tenant}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updateTenant>>,
+        TError,
+        {id: number;data: Tenant},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateTenantMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    export const deleteTenant = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<void>> => {
+    
+    return axios.delete(
+      `/api/tenants/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteTenantMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTenant>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTenant>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTenant>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteTenant(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTenantMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTenant>>>
+    
+    export type DeleteTenantMutationError = AxiosError<unknown>
+
+    export const useDeleteTenant = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTenant>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteTenant>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteTenantMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    export const getTenants = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<Tenant[]>> => {
     
