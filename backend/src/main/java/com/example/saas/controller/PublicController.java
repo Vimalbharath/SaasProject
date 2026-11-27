@@ -50,4 +50,9 @@ public class PublicController {
         public String getUsername() { return username; }
         public String getPassword() { return password; }
     }
+    
+    @GetMapping("/tenants")
+    public List<Tenant> getApprovedTenants() {
+        return tenantRepo.findByStatus(TenantStatus.APPROVED);
+    }
 }
