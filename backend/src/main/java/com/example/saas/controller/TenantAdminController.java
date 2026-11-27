@@ -15,12 +15,14 @@ public class TenantAdminController {
     private final UserRepository userRepo;
     private final TenantRepository tenantRepo;
     private final GameRepository gameRepo;
+    private final TournamentRepository tournamentRepo;
     private final PasswordEncoder encoder;
 
-    public TenantAdminController(UserRepository userRepo, TenantRepository tenantRepo, GameRepository gameRepo, PasswordEncoder encoder) {
+    public TenantAdminController(UserRepository userRepo,TournamentRepository tournamentRepo, TenantRepository tenantRepo, GameRepository gameRepo, PasswordEncoder encoder) {
         this.userRepo = userRepo;
         this.tenantRepo = tenantRepo;
         this.gameRepo = gameRepo;
+        this.tournamentRepo=tournamentRepo;
         this.encoder = encoder;
     }
 
@@ -83,6 +85,26 @@ public class TenantAdminController {
         return ResponseEntity.ok("Game deleted successfully.");
     }
 
+ // --- Tournament MANAGEMENT ---
+
+    @GetMapping("/tournaments")
+    public List<Tournament> getTenantTournaments(@RequestHeader("X-Tenant-ID") Long tenantId) {
+        return tournamentRepo.findByTenantId(tenantId);
+    }
+
+    @PostMapping("/tournaments")
+    public Tournament createTournament(@RequestHeader("X-Tenant-ID") Long tenantId, @RequestBody Tournament tournament) {
+        Tenant tenant = tenantRepo.findById(tenantId).orElseThrow(() -> new RuntimeException("Tenant not found"));
+        tournament.setTenant(tenant);
+        return tournamentRepo.save(tournament);
+    }
+
+    @DeleteMapping("/tournaments/{id}")
+    public ResponseEntity<?> deleteTournament(@PathVariable Long id) {
+    	tournamentRepo.deleteById(id);
+        return ResponseEntity.ok("Tournament deleted successfully.");
+    }
+    
     public static class OrganizerCreateRequest {
         private String username;
         private String password;

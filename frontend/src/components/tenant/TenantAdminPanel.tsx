@@ -6,6 +6,9 @@ import {
     useGetTenantGames,
     useCreateGame,
     useDeleteGame,
+    useGetTenantTournaments,
+    useCreateTournament,
+    useDeleteTournament,
 } from '@saas/api-client';
 import { useAuth } from '../../context/AuthContext';
 import { dashboardStyles as styles } from '../../styles/dashboardStyles';
@@ -26,6 +29,10 @@ export const TenantAdminPanel: React.FC = () => {
     const { data: tenantGames, refetch: refetchTenantGames } = useGetTenantGames();
     const createGameMutation = useCreateGame();
     const deleteGameMutation = useDeleteGame();
+
+    const { data: tenantTournaments, refetch: refetchTenantTournaments } = useGetTenantTournaments();
+    const createTournamentMutation = useCreateTournament();
+    const deleteTournamentMutation = useDeleteTournament();
 
     // Match Schedule state (keyed by tenantId)
     const [schedulesByTenant, setSchedulesByTenant] = useState<Record<string, ScheduledMatch[]>>({});
@@ -153,6 +160,44 @@ export const TenantAdminPanel: React.FC = () => {
                                 style={styles.dangerBtn}
                                 onClick={() =>
                                     deleteGameMutation.mutate({ id: g.id }, { onSuccess: () => refetchTenantGames() })
+                                }
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ))}
+            </div>
+
+            {/* Games / Matches */}
+            <div style={{ marginBottom: '28px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <h4 style={{ margin: 0 }}>Tournaments</h4>
+                    <button
+                        style={styles.primaryBtn}
+                        onClick={() => {
+                            const title = prompt('Game / Match Title (e.g., Team A vs Team B):');
+                            if (title) {
+                                createTournamentMutation.mutate(
+                                    { data: { title, public: true } },
+                                    { onSuccess: () => refetchTenantTournaments() }
+                                );
+                            }
+                        }}
+                    >
+                        + Add Tournament
+                    </button>
+                </div>
+                {Array.isArray(tenantTournaments?.data) &&
+                    tenantTournaments?.data.map((g: any) => (
+                        <div key={g.id} style={styles.listRow}>
+                            <span>
+                                <strong>{g.title}</strong> • Score: { } (
+                                {Boolean(g.isPublic ?? g.public) ? 'Public' : 'Private'})
+                            </span>
+                            <button
+                                style={styles.dangerBtn}
+                                onClick={() =>
+                                    deleteTournamentMutation.mutate({ id: g.id }, { onSuccess: () => refetchTenantTournaments() })
                                 }
                             >
                                 Delete

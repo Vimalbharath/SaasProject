@@ -28,8 +28,10 @@ import type {
   AddOrganizer200,
   DeleteGame200,
   DeleteOrganizer200,
+  DeleteTournament200,
   Game,
   OrganizerCreateRequest,
+  Tournament,
   UpdateOrganizer200,
   User
 } from '../../models'
@@ -129,6 +131,106 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
       > => {
 
       const mutationOptions = getDeleteOrganizerMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    export const getTenantTournaments = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Tournament[]>> => {
+    
+    return axios.get(
+      `/api/tenant-admin/tournaments`,options
+    );
+  }
+
+
+export const getGetTenantTournamentsQueryKey = () => {
+    return [`/api/tenant-admin/tournaments`] as const;
+    }
+
+    
+export const getGetTenantTournamentsQueryOptions = <TData = Awaited<ReturnType<typeof getTenantTournaments>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTenantTournaments>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTenantTournamentsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTenantTournaments>>> = ({ signal }) => getTenantTournaments({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTenantTournaments>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetTenantTournamentsQueryResult = NonNullable<Awaited<ReturnType<typeof getTenantTournaments>>>
+export type GetTenantTournamentsQueryError = AxiosError<unknown>
+
+export const useGetTenantTournaments = <TData = Awaited<ReturnType<typeof getTenantTournaments>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTenantTournaments>>, TError, TData>>, axios?: AxiosRequestConfig}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetTenantTournamentsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const createTournament = (
+    tournament: Tournament, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Tournament>> => {
+    
+    return axios.post(
+      `/api/tenant-admin/tournaments`,
+      tournament,options
+    );
+  }
+
+
+
+export const getCreateTournamentMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTournament>>, TError,{data: Tournament}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof createTournament>>, TError,{data: Tournament}, TContext> => {
+const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTournament>>, {data: Tournament}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createTournament(data,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateTournamentMutationResult = NonNullable<Awaited<ReturnType<typeof createTournament>>>
+    export type CreateTournamentMutationBody = Tournament
+    export type CreateTournamentMutationError = AxiosError<unknown>
+
+    export const useCreateTournament = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTournament>>, TError,{data: Tournament}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createTournament>>,
+        TError,
+        {data: Tournament},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateTournamentMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
@@ -329,6 +431,53 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
       > => {
 
       const mutationOptions = getCreateGameMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    export const deleteTournament = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<DeleteTournament200>> => {
+    
+    return axios.delete(
+      `/api/tenant-admin/tournaments/${id}`,options
+    );
+  }
+
+
+
+export const getDeleteTournamentMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTournament>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTournament>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTournament>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteTournament(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTournamentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTournament>>>
+    
+    export type DeleteTournamentMutationError = AxiosError<unknown>
+
+    export const useDeleteTournament = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTournament>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteTournament>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteTournamentMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

@@ -4,6 +4,7 @@ import { TenantItem, useAuth } from '../../context/AuthContext';
 import { ScrollFeatureBanners } from './ScrollFeatureBanners';
 import { TenantDirectoryGrid } from './TenantDirectoryGrid';
 import { PublicGamesGrid } from './PublicGamesGrid';
+import { PublicTournamentsGrid } from './PublicTournamentsGrid';
 import { dashboardStyles as styles } from '../../styles/dashboardStyles';
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
     onRefreshTenants: () => void;
     publicGames: any;
     onRefreshGames: () => void;
+    publicTournaments: any;
+    onRefreshTournaments: () => void;
 }
 
 export const HomeView: React.FC<Props> = ({
@@ -18,6 +21,8 @@ export const HomeView: React.FC<Props> = ({
     onRefreshTenants,
     publicGames,
     onRefreshGames,
+    publicTournaments,
+    onRefreshTournaments
 }) => {
     const { showRegisterModal, setShowRegisterModal } = useAuth();
     const [regOrgName, setRegOrgName] = useState('');
@@ -123,6 +128,7 @@ export const HomeView: React.FC<Props> = ({
                 <ScrollFeatureBanners />
                 <TenantDirectoryGrid tenants={publicTenants} onRefresh={onRefreshTenants} />
                 <PublicGamesGrid games={publicGames} onRefresh={onRefreshGames} />
+                <PublicTournamentsGrid tournaments={publicTournaments} onRefresh={onRefreshTournaments} />
             </div>
         </div>
     );
