@@ -14,7 +14,8 @@ import {
     useCreateGame,
     useDeleteGame,
     useGetGames,
-    useUpdateGameScore
+    useUpdateGameScore,
+    useToggleGameVisibility
 } from '@saas/api-client';
 import axios from 'axios';
 
@@ -162,6 +163,8 @@ function AppDashboard() {
         setSelectedTenant(null);
         setActiveView('HOME');
     };
+
+    const toggleVisibilityMutation = useToggleGameVisibility();
 
     return (
         <div style={styles.page}>
@@ -394,21 +397,57 @@ function AppDashboard() {
                                         <h3 style={styles.sectionTitle}>Live Scorekeeper Console</h3>
                                         <button style={styles.secondaryBtn} onClick={() => refetchOrganizerGames()}>Load Matches</button>
                                     </div>
-                                    {Array.isArray(organizerGames?.data) && organizerGames?.data.map((g: any) => (
-                                        <div key={g.id} style={styles.listRow}>
-                                            <span><strong>{g.title}</strong> — Current: {g.scoreDetails}</span>
-                                            <button style={styles.primaryBtn} onClick={() => {
-                                                const newScore = prompt('Enter updated score:', g.scoreDetails);
-                                                const isPub = confirm('Publish score to public homepage?');
-                                                if (newScore !== null) {
-                                                    updateScoreMutation.mutate(
-                                                        { id: g.id, data: { scoreDetails: newScore, public: isPub } },
-                                                        { onSuccess: () => refetchOrganizerGames() }
-                                                    );
-                                                }
-                                            }}>Update Score</button>
-                                        </div>
-                                    ))}
+                                    {Array.isArray(organizerGames?.data) && organizerGames?.data.map((g: any) => {
+                                        const isGamePublic = Boolean(g.isPublic ?? g.public);
+
+                                        return (
+                                            <div key={g.id} style={styles.listRow}>
+                                                <div>
+                                                    <strong>{g.title}</strong> — Current: {g.scoreDetails}{' '}
+                                                    <span style={styles.badge}>{isGamePublic ? 'Public' : 'Private'}</span>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <button
+                                                        style={styles.primaryBtn}
+                                                        onClick={() => {
+                                                            const newScore = prompt('Enter updated score:', g.scoreDetails);
+                                                            const isPub = confirm('Publish score to public homepage?');
+                                                            if (newScore !== null) {
+                                                                updateScoreMutation.mutate(
+                                                                    { id: g.id, data: { scoreDetails: newScore, public: isPub } },
+                                                                    {
+                                                                        onSuccess: () => {
+                                                                            refetchOrganizerGames();
+                                                                            refetchPublicGames();
+                                                                        },
+                                                                    }
+                                                                );
+                                                            }
+                                                        }}
+                                                    >
+                                                        Update Score
+                                                    </button>
+
+                                                    <button
+                                                        style={isGamePublic ? styles.secondaryBtn : styles.successBtn}
+                                                        onClick={() =>
+                                                            toggleVisibilityMutation.mutate(
+                                                                { id: g.id },
+                                                                {
+                                                                    onSuccess: () => {
+                                                                        refetchOrganizerGames();
+                                                                        refetchPublicGames();
+                                                                    },
+                                                                }
+                                                            )
+                                                        }
+                                                    >
+                                                        {isGamePublic ? 'Make Private' : 'Make Public'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>

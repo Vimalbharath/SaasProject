@@ -7,7 +7,7 @@ export {
   getGetTenantsQueryOptions,
   useGetTenants,
   getCreateTenantMutationOptions,
-  useCreateTenant
+  useCreateTenant,
 } from './generated/endpoints/tenant-controller/tenant-controller';
 export * from './generated/endpoints/organizer-controller/organizer-controller';
 export * from './generated/endpoints/public-controller/public-controller';

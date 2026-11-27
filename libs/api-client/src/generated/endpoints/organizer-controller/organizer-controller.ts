@@ -27,6 +27,7 @@ import type {
 import type {
   Game,
   GameScoreUpdateDTO,
+  ToggleGameVisibility200,
   UpdateGameScore200
 } from '../../models'
 
@@ -78,6 +79,53 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
       > => {
 
       const mutationOptions = getUpdateGameScoreMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    export const toggleGameVisibility = (
+    id: number, options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<ToggleGameVisibility200>> => {
+    
+    return axios.patch(
+      `/api/organizer/games/${id}/visibility`,undefined,options
+    );
+  }
+
+
+
+export const getToggleGameVisibilityMutationOptions = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof toggleGameVisibility>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationOptions<Awaited<ReturnType<typeof toggleGameVisibility>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof toggleGameVisibility>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  toggleGameVisibility(id,axiosOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ToggleGameVisibilityMutationResult = NonNullable<Awaited<ReturnType<typeof toggleGameVisibility>>>
+    
+    export type ToggleGameVisibilityMutationError = AxiosError<unknown>
+
+    export const useToggleGameVisibility = <TError = AxiosError<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof toggleGameVisibility>>, TError,{id: number}, TContext>, axios?: AxiosRequestConfig}
+): UseMutationResult<
+        Awaited<ReturnType<typeof toggleGameVisibility>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getToggleGameVisibilityMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

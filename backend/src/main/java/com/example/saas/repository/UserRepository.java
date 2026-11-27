@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByTenantIdAndRole(Long tenantId, Role roleOrganizer);
 
+	void deleteByTenantId(Long id);
+
 }

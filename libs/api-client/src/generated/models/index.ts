@@ -20,6 +20,7 @@ export * from './registerTenant200';
 export * from './tenant';
 export * from './tenantRegisterDTO';
 export * from './tenantStatus';
+export * from './toggleGameVisibility200';
 export * from './updateGameScore200';
 export * from './updateOrganizer200';
 export * from './user';

@@ -2,8 +2,12 @@ package com.example.saas.controller;
 
 import com.example.saas.model.Tenant;
 import com.example.saas.model.TenantStatus;
+import com.example.saas.repository.GameRepository;
 import com.example.saas.repository.TenantRepository;
+import com.example.saas.repository.UserRepository;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,9 +17,13 @@ import java.util.List;
 public class SuperAdminController {
 
     private final TenantRepository tenantRepo;
+    private final UserRepository userRepo;
+    private final GameRepository gameRepo;
 
-    public SuperAdminController(TenantRepository tenantRepo) {
+    public SuperAdminController(TenantRepository tenantRepo,UserRepository userRepo, GameRepository gameRepo) {
         this.tenantRepo = tenantRepo;
+		this.userRepo = userRepo;
+		this.gameRepo = gameRepo;
     }
 
     @GetMapping("/pending-tenants")
@@ -37,11 +45,15 @@ public class SuperAdminController {
 
     // NEW: Delete Tenant option for Super Admin
     @DeleteMapping("/tenants/{id}")
+    @Transactional
     public ResponseEntity<?> deleteTenant(@PathVariable Long id) {
-        if (!tenantRepo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        tenantRepo.deleteById(id);
-        return ResponseEntity.ok("Tenant and associated data deleted successfully.");
+        Tenant tenant = tenantRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tenant not found"));
+
+        gameRepo.deleteByTenantId(id);
+        userRepo.deleteByTenantId(id);
+        tenantRepo.delete(tenant);
+
+        return ResponseEntity.ok("Tenant deleted successfully.");
     }
 }

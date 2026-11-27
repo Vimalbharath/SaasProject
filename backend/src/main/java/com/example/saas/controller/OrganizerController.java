@@ -17,22 +17,46 @@ public class OrganizerController {
         this.gameRepo = gameRepo;
     }
 
-    // View games assigned to their tenant workspace
     @GetMapping("/games")
     public List<Game> getGames(@RequestHeader("X-Tenant-ID") Long tenantId) {
         return gameRepo.findByTenantId(tenantId);
     }
 
-    // Update live scores and toggle public visibility
     @PutMapping("/games/{id}/score")
-    public ResponseEntity<?> updateGameScore(@PathVariable Long id, @RequestBody GameScoreUpdateDTO dto) {
-        Game game = gameRepo.findById(id).orElseThrow(() -> new RuntimeException("Game not found"));
-        
+    public ResponseEntity<?> updateGameScore(
+            @PathVariable Long id,
+            @RequestHeader("X-Tenant-ID") Long tenantId,
+            @RequestBody GameScoreUpdateDTO dto) {
+        Game game = gameRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
+
+        if (!game.getTenant().getId().equals(tenantId)) {
+            return ResponseEntity.status(403).body("Access denied for this tenant's game.");
+        }
+
         game.setScoreDetails(dto.getScoreDetails());
         game.setPublic(dto.isPublic());
         gameRepo.save(game);
-        
-        return ResponseEntity.ok("Game score updated successfully.");
+
+        return ResponseEntity.ok(game);
+    }
+
+    // NEW: Toggle visibility without modifying scoreDetails
+    @PatchMapping("/games/{id}/visibility")
+    public ResponseEntity<?> toggleGameVisibility(
+            @PathVariable Long id,
+            @RequestHeader("X-Tenant-ID") Long tenantId) {
+        Game game = gameRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Game not found"));
+
+        if (!game.getTenant().getId().equals(tenantId)) {
+            return ResponseEntity.status(403).body("Access denied for this tenant's game.");
+        }
+
+        game.setPublic(!game.isPublic());
+        Game saved = gameRepo.save(game);
+
+        return ResponseEntity.ok(saved);
     }
 
     public static class GameScoreUpdateDTO {

@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface GameRepository extends JpaRepository<Game, Long> {
 	List<Game> findByTenantId(Long tenantId);
 	List<Game> findByIsPublicTrue();
+	void deleteByTenantId(Long id);
 }

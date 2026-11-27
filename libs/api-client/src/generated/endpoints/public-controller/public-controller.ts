@@ -27,6 +27,7 @@ import type {
 import type {
   Game,
   RegisterTenant200,
+  Tenant,
   TenantRegisterDTO
 } from '../../models'
 
@@ -80,7 +81,59 @@ const {mutation: mutationOptions, axios: axiosOptions} = options ?? {};
 
       return useMutation(mutationOptions);
     }
-    export const getPublicGames = (
+    export const getApprovedTenants = (
+     options?: AxiosRequestConfig
+ ): Promise<AxiosResponse<Tenant[]>> => {
+    
+    return axios.get(
+      `/api/public/tenants`,options
+    );
+  }
+
+
+export const getGetApprovedTenantsQueryKey = () => {
+    return [`/api/public/tenants`] as const;
+    }
+
+    
+export const getGetApprovedTenantsQueryOptions = <TData = Awaited<ReturnType<typeof getApprovedTenants>>, TError = AxiosError<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovedTenants>>, TError, TData>>, axios?: AxiosRequestConfig}
+) => {
+
+const {query: queryOptions, axios: axiosOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApprovedTenantsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApprovedTenants>>> = ({ signal }) => getApprovedTenants({ signal, ...axiosOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApprovedTenants>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetApprovedTenantsQueryResult = NonNullable<Awaited<ReturnType<typeof getApprovedTenants>>>
+export type GetApprovedTenantsQueryError = AxiosError<unknown>
+
+export const useGetApprovedTenants = <TData = Awaited<ReturnType<typeof getApprovedTenants>>, TError = AxiosError<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApprovedTenants>>, TError, TData>>, axios?: AxiosRequestConfig}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetApprovedTenantsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getPublicGames = (
      options?: AxiosRequestConfig
  ): Promise<AxiosResponse<Game[]>> => {
     
